@@ -1,4 +1,8 @@
-import streamlit as stimport pandas as pdimport numpy as npimport iofrom datetime import datetime
+import streamlit as st
+import pandas as pd
+import numpy as np
+import io
+from datetime import datetime
 st.set_page_config(page_title="Multi-Deal XIRR Calculator", layout="wide")st.title(" Multi-Deal XIRR Calculator")
 # ----------------------------# Helper Functions# ----------------------------def xirr(cashflows, guess=0.1):    """cashflows = list of tuples (date, amount)"""    def npv(rate):        return sum([            cf / ((1 + rate) ** ((d - cashflows[0][0]).days / 365))            for d, cf in cashflows        ])    rate = guess    for _ in range(100):        f = npv(rate)        f_prime = sum([            - (d - cashflows[0][0]).days/365 * cf /            ((1 + rate) ** (((d - cashflows[0][0]).days / 365) + 1))            for d, cf in cashflows        ])        rate -= f / f_prime    return rate
 def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):    """    Adjust floating rate cashflows using BBSY resets.    - cashflows_df: DataFrame with [Date, Cashflow]    - bbsy_df: DataFrame with [Date, Rate]    - anniv_date: resets annually from this date    """    df = cashflows_df.copy()    df = df.sort_values("Date").reset_index(drop=True)
