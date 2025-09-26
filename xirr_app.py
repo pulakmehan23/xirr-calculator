@@ -27,9 +27,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align:center;'>📊 Multi-Deal 
-
-XIRR Calculator</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;'> Multi-Deal XIRR Calculator</h1>", unsafe_allow_html=True)
 
 # ----------------------------
 # Helper Functions
@@ -98,7 +96,7 @@ if "settings" not in st.session_state:
 # ----------------------------
 # Add Deal Button
 # ----------------------------
-if st.button("➕ Add Deal"):
+if st.button(" Add Deal"):
     next_id = max(st.session_state.deals.keys()) + 1
     st.session_state.deals[next_id] = pd.DataFrame({
         "Date": [datetime(2025,1,1)],
@@ -112,7 +110,7 @@ if st.button("➕ Add Deal"):
 # ----------------------------
 # Upload BBSY
 # ----------------------------
-st.subheader("📥 Upload BBSY Rates")
+st.subheader(" Upload BBSY Rates")
 bbsy_file = st.file_uploader("Upload BBSY (CSV or Excel)", type=["csv", "xlsx"])
 bbsy_df = None
 if bbsy_file:
@@ -128,10 +126,10 @@ if bbsy_file:
 # Deal Sections
 # ----------------------------
 results = []
-base_rate_global = st.number_input("🌍 Base Rate (%)", value=5.0, step=0.1)
+base_rate_global = st.number_input(" Base Rate (%)", value=5.0, step=0.1)
 
 for deal_id, df in st.session_state.deals.items():
-    with st.expander(f"⚙️ Deal {deal_id} Settings", expanded=True):
+    with st.expander(f" Deal {deal_id} Settings", expanded=True):
         col1, col2 = st.columns(2)
         with col1:
             rate_type = st.radio(f"Rate Type (Deal {deal_id})", ["Fixed", "Floating"], 
@@ -146,7 +144,7 @@ for deal_id, df in st.session_state.deals.items():
             else:
                 st.write("Anniversary Date (N/A)")
 
-        st.write("✍️ Enter Cashflows for this Deal:")
+        st.write(" Enter Cashflows for this Deal:")
         st.session_state.deals[deal_id] = st.data_editor(
             df,
             num_rows="dynamic",
@@ -156,7 +154,7 @@ for deal_id, df in st.session_state.deals.items():
 # ----------------------------
 # Calculate Button
 # ----------------------------
-if st.button("🔄 Calculate XIRR for All Deals"):
+if st.button(" Calculate XIRR for All Deals"):
     summary = []
     for deal_id, df in st.session_state.deals.items():
         settings = st.session_state.settings[deal_id]
@@ -177,7 +175,7 @@ in adj_df.itertuples(index=False)]
             result = xirr(flows) * 100
             ups = result - base_rate_global
 
-            st.subheader(f"📌 Deal {deal_id} Results")
+            st.subheader(f" Deal {deal_id} Results")
             st.success(f"Effective XIRR: {result:.2f}%")
             st.metric("Ups vs Base", f"{ups:.2f}%", delta=ups)
             st.dataframe(adj_df)
@@ -190,11 +188,11 @@ in adj_df.itertuples(index=False)]
             })
 
         except Exception as e:
-            st.error(f"❌ Error in Deal {deal_id}: {e}")
+            st.error(f" Error in Deal {deal_id}: {e}")
 
     # Summary
     if summary:
-        st.subheader("📊 All Deals Summary")
+        st.subheader(" All Deals Summary")
         summary_df = pd.DataFrame(summary)
         st.dataframe(summary_df)
 
@@ -209,7 +207,7 @@ in adj_df.itertuples(index=False)]
             summary_df.to_excel(writer, sheet_name="Summary", index=False)
 
         st.download_button(
-            "💾 Export Results",
+            " Export Results",
             data=out,
             file_name="xirr_results.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
