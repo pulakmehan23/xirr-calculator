@@ -49,10 +49,12 @@ deal_count = st.number_input("Number of deals", min_value=1, max_value=10, value
 base_rate = st.number_input("Base Rate (%)", value=5.0, step=0.1)
 deal_settings = []
 for d in range(1, deal_count + 1):    
-    with st.expander(f" Deal {d} Settings", expanded=(d == 1)):        rate_type = st.radio(f"Rate Type (Deal {d})", ["Fixed", "Floating"], key=f"rate_{d}")        anniv_date = None        
-        if rate_type == "Floating":            
-            anniv_date = st.date_input(f"Anniversary Date (Deal {d})", key=f"anniv_{d}")            # convert date_input to datetime            
-            anniv_date = datetime.combine(anniv_date, datetime.min.time())        
+    with st.expander(f" Deal {d} Settings", expanded=(d == 1)):        
+        rate_type = st.radio(f"Rate Type (Deal {d})", ["Fixed", "Floating"], key=f"rate_{d}")       
+        anniv_date = None        
+    if rate_type == "Floating":            
+        anniv_date = st.date_input(f"Anniversary Date (Deal {d})", key=f"anniv_{d}")            # convert date_input to datetime            
+        anniv_date = datetime.combine(anniv_date, datetime.min.time())        
 deal_settings.append({            
     "deal_id": d,            
     "rate_type": rate_type,            
