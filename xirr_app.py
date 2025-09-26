@@ -28,26 +28,18 @@ def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):
 cash_file = st.file_uploader("Upload Cashflows (CSV or Excel)", type=["csv", "xlsx"])
 bbsy_file = st.file_uploader("Upload BBSY Rates (CSV or Excel)", type=["csv", "xlsx"])
 cashflows_df, bbsy_df = None, None
-if cash_file:    
-if cash_file.name.endswith(".csv"):        
+if cash_file:    if cash_file.name.endswith(".csv"):        
     cashflows_df = pd.read_csv(cash_file, parse_dates=[0])    
-else:        
-    cashflows_df = pd.read_excel(cash_file, parse_dates=[0])    
-    cashflows_df.columns = ["Date", "Cashflow"]    
-    st.write("Cashflows Preview")    
-    st.dataframe(cashflows_df)
+else:        cashflows_df = pd.read_excel(cash_file, parse_dates=[0])    cashflows_df.columns = ["Date", "Cashflow"]    st.write("Cashflows Preview")    st.dataframe(cashflows_df)
 if bbsy_file:    
-if bbsy_file.name.endswith(".csv"):        
-    bbsy_df = pd.read_csv(bbsy_file, parse_dates=[0])    
-else:        
-    bbsy_df = pd.read_excel(bbsy_file, parse_dates=[0])    
-    bbsy_df.columns = ["Date", "Rate"]    
-    st.write("BBSY Preview")    
-    st.dataframe(bbsy_df)
+if bbsy_file.name.endswith(".csv"):        bbsy_df = pd.read_csv(bbsy_file, parse_dates=[0])    
+else:        bbsy_df = pd.read_excel(bbsy_file, parse_dates=[0])    bbsy_df.columns = ["Date", "Rate"]    st.write("BBSY Preview")    st.dataframe(bbsy_df)
 # ----------------------------# Step 2: Deal Settings# ----------------------------st.header(" Deal Settings")
-deal_count = st.number_input("Number of deals", min_value=1, max_value=10, value=1, step=1)base_rate = st.number_input("Base Rate (%)", value=5.0, step=0.1)
+deal_count = st.number_input("Number of deals", min_value=1, max_value=10, value=1, step=1)
+base_rate = st.number_input("Base Rate (%)", value=5.0, step=0.1)
 deal_settings = []
-for d in range(1, deal_count + 1):    with st.expander(f" Deal {d} Settings", expanded=(d == 1)):        rate_type = st.radio(f"Rate Type (Deal {d})", ["Fixed", "Floating"], key=f"rate_{d}")        anniv_date = None        if rate_type == "Floating":            anniv_date = st.date_input(f"Anniversary Date (Deal {d})", key=f"anniv_{d}")            # convert date_input to datetime            anniv_date = datetime.combine(anniv_date, datetime.min.time())        deal_settings.append({            "deal_id": d,            "rate_type": rate_type,            "anniv_date": anniv_date        })
+for d in range(1, deal_count + 1):    
+with st.expander(f" Deal {d} Settings", expanded=(d == 1)):        rate_type = st.radio(f"Rate Type (Deal {d})", ["Fixed", "Floating"], key=f"rate_{d}")        anniv_date = None        if rate_type == "Floating":            anniv_date = st.date_input(f"Anniversary Date (Deal {d})", key=f"anniv_{d}")            # convert date_input to datetime            anniv_date = datetime.combine(anniv_date, datetime.min.time())        deal_settings.append({            "deal_id": d,            "rate_type": rate_type,            "anniv_date": anniv_date        })
 # ----------------------------# Step 3: Calculation# ----------------------------if st.button(" Calculate XIRR for All Deals"):    if cashflows_df is not None:        summary = []
         for deal in deal_settings:            d_id = deal["deal_id"]
             # Adjust floating cashflows if needed            if deal["rate_type"] == "Floating" and bbsy_df is not None:                adj_df = apply_bbsy(cashflows_df, bbsy_df, deal["anniv_date"])            else:                adj_df = cashflows_df.copy()                adj_df["Adj_CF"] = adj_df["Cashflow"]
