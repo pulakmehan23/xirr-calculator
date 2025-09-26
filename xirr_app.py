@@ -16,7 +16,13 @@ def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):
     df = cashflows_df.copy()    
     df = df.sort_values("Date").reset_index(drop=True)
     if bbsy_df is not None and anniv_date is not None:        # ensure anniv_date is datetime        if isinstance(anniv_date, pd.Timestamp):            anniv_date = anniv_date.to_pydatetime()        elif not isinstance(anniv_date, datetime):            anniv_date = datetime.combine(anniv_date, datetime.min.time())
-        df["Rate"] = np.nan        for i, row in df.iterrows():            applicable = bbsy_df[bbsy_df["Date"] <= row["Date"]]            if not applicable.empty:                df.loc[i, "Rate"] = applicable.iloc[-1]["Rate"]        df["Adj_CF"] = df["Cashflow"] * (1 + df["Rate"].fillna(0)/100)    else:        df["Adj_CF"] = df["Cashflow"]
+        df["Rate"] = np.nan        
+        for i, row in df.iterrows():            
+            applicable = bbsy_df[bbsy_df["Date"] <= row["Date"]]            
+            if not applicable.empty:                
+                df.loc[i, "Rate"] = applicable.iloc[-1]["Rate"]        
+                df["Adj_CF"] = df["Cashflow"] * (1 + df["Rate"].fillna(0)/100)    
+            else:        df["Adj_CF"] = df["Cashflow"]
     return df
 # ----------------------------# Step 1: Upload Files# ----------------------------st.header(" Upload Data")
 cash_file = st.file_uploader("Upload Cashflows (CSV or Excel)", type=["csv", "xlsx"])bbsy_file = st.file_uploader("Upload BBSY Rates (CSV or Excel)", type=["csv", "xlsx"])
