@@ -5,7 +5,8 @@ import io
 from datetime import datetime
 st.set_page_config(page_title="Multi-Deal XIRR Calculator", layout="wide")
 st.title(" Multi-Deal XIRR Calculator")
-# ----------------------------# Helper Functions# ----------------------------def xirr(cashflows, guess=0.1):    """cashflows = list of tuples (date, amount)"""    def npv(rate):        return sum([            cf / ((1 + rate) ** ((d - cashflows[0][0]).days / 365))            for d, cf in cashflows        ])    rate = guess    for _ in range(100):        f = npv(rate)        f_prime = sum([            - (d - cashflows[0][0]).days/365 * cf /            ((1 + rate) ** (((d - cashflows[0][0]).days / 365) + 1))            for d, cf in cashflows        ])        rate -= f / f_prime    return rate
+# ----------------------------# Helper Functions# ----------------------------
+def xirr(cashflows, guess=0.1):    """cashflows = list of tuples (date, amount)"""    def npv(rate):        return sum([            cf / ((1 + rate) ** ((d - cashflows[0][0]).days / 365))            for d, cf in cashflows        ])    rate = guess    for _ in range(100):        f = npv(rate)        f_prime = sum([            - (d - cashflows[0][0]).days/365 * cf /            ((1 + rate) ** (((d - cashflows[0][0]).days / 365) + 1))            for d, cf in cashflows        ])        rate -= f / f_prime    return rate
 def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):    
     """    
     Adjust floating rate cashflows using BBSY resets.    
@@ -24,7 +25,8 @@ def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):
                 df["Adj_CF"] = df["Cashflow"] * (1 + df["Rate"].fillna(0)/100)    
             else:        df["Adj_CF"] = df["Cashflow"]
     return df
-# ----------------------------# Step 1: Upload Files# ----------------------------st.header(" Upload Data")
+# ----------------------------# Step 1: Upload Files# ----------------------------
+st.header(" Upload Data")
 cash_file = st.file_uploader("Upload Cashflows (CSV or Excel)", type=["csv", "xlsx"])
 bbsy_file = st.file_uploader("Upload BBSY Rates (CSV or Excel)", type=["csv", "xlsx"])
 cashflows_df, bbsy_df = None, None
