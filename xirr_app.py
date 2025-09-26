@@ -29,8 +29,8 @@ cash_file = st.file_uploader("Upload Cashflows (CSV or Excel)", type=["csv", "xl
 bbsy_file = st.file_uploader("Upload BBSY Rates (CSV or Excel)", type=["csv", "xlsx"])
 cashflows_df, bbsy_df = None, None
 if cash_file:    
-if cash_file.name.endswith(".csv"):        
-    cashflows_df = pd.read_csv(cash_file, parse_dates=[0])    
+    if cash_file.name.endswith(".csv"):        
+        cashflows_df = pd.read_csv(cash_file, parse_dates=[0])    
 else:        
     cashflows_df = pd.read_excel(cash_file, parse_dates=[0])    
     cashflows_df.columns = ["Date", "Cashflow"]    
