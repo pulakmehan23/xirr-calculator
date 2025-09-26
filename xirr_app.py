@@ -60,11 +60,11 @@ deal_settings.append({
     "rate_type": rate_type,            
     "anniv_date": anniv_date        
 })
-# ----------------------------# Step 3: Calculation# ----------------------------if st.button(" Calculate XIRR for All Deals"):    if cashflows_df is not None:        summary = []
-        for deal in deal_settings:            
-            d_id = deal["deal_id"]
-            # Adjust floating cashflows if needed            if deal["rate_type"] == "Floating" and bbsy_df is not None:                adj_df = apply_bbsy(cashflows_df, bbsy_df, deal["anniv_date"])            else:                adj_df = cashflows_df.copy()                adj_df["Adj_CF"] = adj_df["Cashflow"]
-            # Build flows for XIRR            flows = [(row.Date.to_pydatetime(), row.Adj_CF) for row in adj_df.itertuples(index=False)]
+# ----------------------------# Step 3: Calculation# ----------------------------
+if st.button(" Calculate XIRR for All Deals"):    
+    if cashflows_df is not None:        
+        summary = []
+        for deal in deal_settings:            # Build flows for XIRR            flows = [(row.Date.to_pydatetime(), row.Adj_CF) for row in adj_df.itertuples(index=False)]
             try:                result = xirr(flows) * 100                ups = result - base_rate
                 st.subheader(f" Deal {d_id} Results")                st.success(f"Effective XIRR: {result:.2f}%")                st.metric("Ups vs Base", f"{ups:.2f}%", delta=ups)                st.dataframe(adj_df)
                 summary.append({                    "Deal": d_id,                    "XIRR (%)": result,                    "Base Rate (%)": base_rate,                    "Ups (%)": ups                })
