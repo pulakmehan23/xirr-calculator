@@ -4,7 +4,7 @@ Import numpy as np
 Import io
 From datetime import datetime
 
-St.set_page_config(page_title=”Multi-Deal XIRR Calculator”, layout=”wide”)
+St.set_page_config(page_title="Multi-Deal XIRR Calculator", layout="wide")
 
 # ----------------------------
 # Custom CSS for polish
