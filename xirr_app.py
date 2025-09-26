@@ -77,9 +77,19 @@ if st.button(" Calculate XIRR for All Deals"):
     if cashflows_df is not None:        
         summary = []
         for deal in deal_settings:            # Build flows for XIRR            flows = [(row.Date.to_pydatetime(), row.Adj_CF) for row in adj_df.itertuples(index=False)]
-            try:                result = xirr(flows) * 100                ups = result - base_rate
-                st.subheader(f" Deal {d_id} Results")                st.success(f"Effective XIRR: {result:.2f}%")                st.metric("Ups vs Base", f"{ups:.2f}%", delta=ups)                st.dataframe(adj_df)
-                summary.append({                    "Deal": d_id,                    "XIRR (%)": result,                    "Base Rate (%)": base_rate,                    "Ups (%)": ups                })
-            except Exception as e:                st.error(f"Error in Deal {d_id} XIRR calc: {e}")
+            try:                
+                result = xirr(flows) * 100                
+                ups = result - base_rate
+                st.subheader(f" Deal {d_id} Results")                
+                st.success(f"Effective XIRR: {result:.2f}%")                
+                st.metric("Ups vs Base", f"{ups:.2f}%", delta=ups)                
+                st.dataframe(adj_df)
+                summary.append({                    
+                    "Deal": d_id,                    
+                    "XIRR (%)": result,                    
+                    "Base Rate (%)": base_rate,                    
+                    "Ups (%)": ups                })
+            except Exception as e:                
+                st.error(f"Error in Deal {d_id} XIRR calc: {e}")
         # Show summary table        if summary:            st.subheader(" All Deals Summary")            summary_df = pd.DataFrame(summary)            st.dataframe(summary_df)
             # Download Excel            out = io.BytesIO()            with pd.ExcelWriter(out, engine="xlsxwriter") as writer:                cashflows_df.to_excel(writer, sheet_name="Cashflows", index=False)                if bbsy_df is not None:                    bbsy_df.to_excel(writer, sheet_name="BBSY", index=False)                summary_df.to_excel(writer, sheet_name="Summary", index=False)            st.download_button(                label=" Download Results",                data=out,                file_name="xirr_multi_deal_results.xlsx",                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"            )    else:        st.error("Please upload cashflows first!")
