@@ -11,7 +11,12 @@ def xirr(cashflows, guess=0.1):
     
     def npv(rate):        
         return sum([            cf / ((1 + rate) ** ((d - cashflows[0][0]).days / 365))            for d, cf in cashflows        ])    
-        rate = guess    for _ in range(100):        f = npv(rate)        f_prime = sum([            - (d - cashflows[0][0]).days/365 * cf /            ((1 + rate) ** (((d - cashflows[0][0]).days / 365) + 1))            for d, cf in cashflows        ])        rate -= f / f_prime    
+        rate = guess    
+        for _ in range(100):        
+            f = npv(rate)        
+            f_prime = sum([            - (d - cashflows[0][0]).days/365 * cf /            ((1 + rate) ** (((d - cashflows[0][0]).days / 365) + 1))            
+                for d, cf in cashflows        ])        
+            rate -= f / f_prime    
         return rate
 def apply_bbsy(cashflows_df, bbsy_df, anniv_date=None):    
     """    
