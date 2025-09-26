@@ -91,5 +91,19 @@ if st.button(" Calculate XIRR for All Deals"):
                     "Ups (%)": ups                })
             except Exception as e:                
                 st.error(f"Error in Deal {d_id} XIRR calc: {e}")
-        # Show summary table        if summary:            st.subheader(" All Deals Summary")            summary_df = pd.DataFrame(summary)            st.dataframe(summary_df)
-            # Download Excel            out = io.BytesIO()            with pd.ExcelWriter(out, engine="xlsxwriter") as writer:                cashflows_df.to_excel(writer, sheet_name="Cashflows", index=False)                if bbsy_df is not None:                    bbsy_df.to_excel(writer, sheet_name="BBSY", index=False)                summary_df.to_excel(writer, sheet_name="Summary", index=False)            st.download_button(                label=" Download Results",                data=out,                file_name="xirr_multi_deal_results.xlsx",                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"            )    else:        st.error("Please upload cashflows first!")
+        # Show summary table        
+if summary:            
+    st.subheader(" All Deals Summary")            
+    summary_df = pd.DataFrame(summary)            
+    st.dataframe(summary_df)
+            # Download Excel            
+out = io.BytesIO()            
+with pd.ExcelWriter(out, engine="xlsxwriter") as writer:                
+    cashflows_df.to_excel(writer, sheet_name="Cashflows", index=False)                
+    if bbsy_df is not None:                    
+        bbsy_df.to_excel(writer, sheet_name="BBSY", index=False)                
+        summary_df.to_excel(writer, sheet_name="Summary", index=False)            
+        st.download_button(                label=" Download Results",                data=out,                file_name="xirr_multi_deal_results.xlsx",                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"            
+                          )    
+    else:        
+        st.error("Please upload cashflows first!")
